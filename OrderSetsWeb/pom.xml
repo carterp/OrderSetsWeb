@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.reedelsevier.ordersets.OrderSetsWeb</groupId>
+    <artifactId>OrderSetsWeb</artifactId>
+    <version>1.0</version>
+    <packaging>war</packaging>
+    <name>OrderSetsWeb</name>
+    <description>Web application for Order Sets</description>
+
+    <distributionManagement>
+        <repository>
+            <id>com.elsevier.nexus</id>
+            <name>ElsevierCentralRepository</name>
+            <url>http://stlbld2.mdconsult.com:8081/nexus/content/repositories/public/</url>
+        </repository>
+    </distributionManagement>
+
+    <properties>
+        <springframework-version>3.1.0.M2</springframework-version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <powermock.version>1.4.10</powermock.version>
+    </properties>
+
+    <prerequisites>
+        <maven>3.0.3</maven>
+    </prerequisites>
+
+    <inceptionYear>2011</inceptionYear>
+
+    <issueManagement>
+        <system>QC</system>
+        <url>http://??</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>hudson</system>
+        <url>http://stlbld2.mdconsult.com:8084</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <configuration>
+                    <address>m.sheldon@elsevier.com</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+
+    <organization>
+        <name>Reed Elsevier - PTG</name>
+        <url>https://mdconsult.basecamphq.com/login</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Shawn Sheldon</name>
+            <id>sheldonm</id>
+            <email>m.sheldon@elsevier.com</email>
+            <organization>PTG</organization>
+            <roles>
+                <role>Tech Lead</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+        <developer>
+            <name>Phil Carter</name>
+            <id>carterp001</id>
+            <email>p.carter@elsevier.com</email>
+            <organization>PTG</organization>
+            <roles>
+                <role>Software Engineer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+    </developers>
+
+    <dependencies>
+        <!-- BEGIN Test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- END Test dependencies -->
+
+        <dependency>
+            <groupId>com.reedelsevier.ordersets</groupId>
+            <artifactId>OrderSetsCommon</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${springframework-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${springframework-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${springframework-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${springframework-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.maven.plugins</groupId>
+            <artifactId>maven-upload-plugin</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.44-1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.1.1</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <scope>runtime</scope>
+            <version>1.1.1</version>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>dev-deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                    <goal>build-classpath</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                    <prefix>.</prefix>
+                                    <pathSeparator>:</pathSeparator>
+                                    <fileSeparator>/</fileSeparator>
+                                    <outputFile>${project.build.directory}/classpath.out</outputFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.atlassian.maven.plugins</groupId>
+                        <artifactId>maven-upload-plugin</artifactId>
+                        <version>1.1</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.wagon</groupId>
+                                <artifactId>wagon-ssh</artifactId>
+                                <version>1.0-beta-7</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>upload</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <resourceSrc>
+                                ${project.build.directory}/${project.build.finalName}.${project.packaging}
+                            </resourceSrc>
+                            <resourceDest>opt/order-sets-web/stage</resourceDest>
+                            <serverId>FIXME</serverId>
+                            <url>FIXME</url>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>local-deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <exec
+                                                dir="${env.TOMCAT_HOME}/bin"
+                                                executable="${env.TOMCAT_HOME}/bin/shutdown.bat"
+                                                failonerror="false">
+                                            <arg line=""/>
+                                        </exec>
+                                        <sleep seconds="5"/>
+                                        <delete verbose="true"
+                                                dir="${env.TOMCAT_HOME}/webapps/${project.build.finalName}"/>
+                                        <delete verbose="true"
+                                                dir="${env.TOMCAT_HOME}/work/Catalina/localhost/${project.build.finalName}"/>
+                                        <delete verbose="true"
+                                                file="${env.TOMCAT_HOME}/webapps/${project.build.finalName}.${project.packaging}"/>
+                                        <copy file="${project.build.directory}/${project.build.finalName}.${project.packaging}"
+                                              todir="${env.TOMCAT_HOME}/webapps" preservelastmodified="true">
+                                        </copy>
+                                        <exec
+                                                dir="${env.TOMCAT_HOME}/bin"
+                                                executable="${env.TOMCAT_HOME}/bin/startup.bat"
+                                                failonerror="false">
+                                            <arg line=""/>
+                                        </exec>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <id>dependency-tree</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>tree</goal>
+                                </goals>
+                                <configuration>
+                                    <outputFile>${project.build.directory}/dependency-tree.out</outputFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>fitnesse</id>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>test-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                    <goal>build-classpath</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                    <prefix>!path /opt/fitnesse/lib</prefix>
+                                    <pathSeparator>:</pathSeparator>
+                                    <fileSeparator>/</fileSeparator>
+                                    <outputFile>${project.build.directory}/fitnesse-classpath.out</outputFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+    </build>
+
+</project>

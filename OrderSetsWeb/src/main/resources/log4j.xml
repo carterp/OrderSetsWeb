@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <!-- This is just a standard ConsoleAppender setup -->
+    <!--<appender name="Logs" class="org.apache.log4j.ConsoleAppender">-->
+    <!--<layout class="org.apache.log4j.PatternLayout">-->
+    <!--<param name="conversionPattern"-->
+    <!--value="%d{HH:mm:ss.SSS(MM/dd)} %-5p %c : %m%n"/>-->
+    <!--</layout>-->
+    <!--</appender>-->
+
+    <appender name="ROLL" class="org.apache.log4j.rolling.RollingFileAppender">
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="fileNamePattern" value="/var/ordersetsweb/log/OrderSetsWeb.%d{yyyy-MM-dd}.gz"/>
+            <param name="activeFileName" value="/var/ordersetsweb/log/OrderSetsWeb.log"/>
+        </rollingPolicy>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="conversionPattern"
+                   value="%d{HH:mm:ss.SSS(MM/dd)} %-5p %c : %m%n"/>
+        </layout>
+    </appender>
+
+    <!--
+    The InstrLayout formats instrumentation records into name=value
+    pairs. The InstrFilter filters out everything but InstrRecords.
+    It can also be used in the appender above to filter out
+    InstrRecords (with rejectInstr=true).
+    -->
+    <appender name="Instr" class="org.apache.log4j.ConsoleAppender">
+        <layout class="lxnx.sysman.logging.impl.InstrLayout"/>
+        <filter class="lxnx.sysman.logging.impl.InstrFilter">
+            <param name="rejectInstr" value="false"/>
+        </filter>
+    </appender>
+
+    <!-- Starts the harvesting thread -->
+    <!-- don't do this in development or on a hudson build server, process won't terminate correctly -->
+    <!-- todo: on certification and production you will have to check if joesnmp config is setup-->
+    <!--<appender name="IntervalRecordAppender" class="lxnx.sysman.instrumentation.impl.IntervalRecordAppender"/>-->
+
+    <!--
+  Set the level for the internal SMAPI messages. This is necessary
+  to handle the initialization messages in IntervalRecordAppender.
+    -->
+    <logger name="SmapiDebug">
+        <level value="info"/>
+    </logger>
+
+    <logger name="org.springframework">
+        <level value="error"/>
+        <appender-ref ref="ROLL"/>
+    </logger>
+
+    <logger name="org.hibernate">
+        <level value="error"/>
+        <appender-ref ref="ROLL"/>
+    </logger>
+
+
+    <!--
+      SysmanDefault is the Logger that the harvesting thread uses
+      again, don't use this in development or on a hudson build server
+    -->
+    <!--<logger name="SysmanDefault" additivity="false">-->
+    <!--<level value="error"/>-->
+    <!--<appender-ref ref="Instr"/>-->
+    <!--<appender-ref ref="IntervalRecordAppender"/>-->
+    <!--</logger>-->
+
+    <root>
+        <level value="debug"/>
+        <appender-ref ref="ROLL"/>
+    </root>
+</log4j:configuration>
